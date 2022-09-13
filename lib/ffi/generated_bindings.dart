@@ -132,7 +132,7 @@ class FlutterBASS {
   late final _BASS_InitPtr = _lookup<
       ffi.NativeFunction<
           BOOL Function(ffi.Int32, DWORD, DWORD, ffi.Pointer<ffi.Void>,
-              ffi.Pointer<ffi.Void>)>>('BASS_Init');
+              ffi.Pointer<ffi.Void>)>>('_BASS_Init');
   late final _BASS_Init = _BASS_InitPtr.asFunction<
       int Function(
           int, int, int, ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Void>)>();

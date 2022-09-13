@@ -1,4 +1,5 @@
 import 'dart:ffi';
+import 'package:flutter/foundation.dart';
 
 import 'package:flutter/material.dart';
 
@@ -16,12 +17,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   @override
   void initState() {
     super.initState();
-    // BASS_Init: -1 = default device, 48000 = sample rate, 0 = flags
-    bass.BASS_Init(-1, 48000, 0, nullptr, nullptr);
   }
 
   @override
@@ -31,7 +29,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Native Packages'),
+          title: const Text('Flutter BASS Example'),
         ),
         body: SingleChildScrollView(
           child: Container(
@@ -39,19 +37,31 @@ class _MyAppState extends State<MyApp> {
             child: Column(
               children: [
                 const Text(
-                  'This calls a native function through FFI that is shipped as source in the package. '
-                  'The native code is built as part of the Flutter Runner build.',
+                  'Integrating BASS with Flutter',
                   style: textStyle,
                   textAlign: TextAlign.center,
                 ),
                 spacerSmall,
-                Text(
-                  'placeholder',
-                  //              'sum(1, 2) = $sumResult',
-                  style: textStyle,
-                  textAlign: TextAlign.center,
+                Container(
+                  margin: EdgeInsets.all(25),
+                  child: TextButton(
+                    child: Text(
+                      'Init BASS',
+                      style: TextStyle(fontSize: 20.0),
+                    ),
+                    onPressed: () {
+                      if (kDebugMode) {
+                        if (bass == null) {
+                          print('Error: bass is null!');
+                        } else {
+                          print('bass is not null');
+                        }
+                      }
+                      // BASS_Init: -1 = default device, 48000 = sample rate, 0 = flags
+                      bass.BASS_Init(-1, 48000, 0, nullptr, nullptr);
+                    },
+                  ),
                 ),
-                spacerSmall,
               ],
             ),
           ),

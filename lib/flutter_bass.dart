@@ -33,7 +33,7 @@ import 'package:flutter_bass/ffi/generated_bindings.dart';
 
 const String _libName = 'flutter_bass';
 
-/// The dynamic library in which the symbols for [FlutterBassBindings] can be found.
+/// The dynamic library in which the symbols for [bass] can be found.
 final DynamicLibrary _dylib = () {
   if (Platform.isMacOS || Platform.isIOS) {
     if (kDebugMode) {
