@@ -25,7 +25,8 @@ ffigen:
   output: 'lib/ffi/generated_bindings.dart'
   headers:
     entry-points: 
-      - 'ios/bass24-ios/bass.h'
+#      - 'ios/bass24-ios/bass.h'
+      - 'ios/bass-ios-test/bass.h'
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

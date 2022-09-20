@@ -56,6 +56,9 @@ class _MyAppState extends State<MyApp> {
                         } else {
                           print('bass is not null');
                         }
+                        if (bass.BASS_Init == null) {
+                          print('Error: bass.BASS_Init is null!');
+                        }
                       }
                       // BASS_Init: -1 = default device, 48000 = sample rate, 0 = flags
                       bass.BASS_Init(-1, 48000, 0, nullptr, nullptr);

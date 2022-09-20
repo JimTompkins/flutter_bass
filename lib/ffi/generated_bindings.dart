@@ -132,7 +132,7 @@ class FlutterBASS {
   late final _BASS_InitPtr = _lookup<
       ffi.NativeFunction<
           BOOL Function(ffi.Int32, DWORD, DWORD, ffi.Pointer<ffi.Void>,
-              ffi.Pointer<ffi.Void>)>>('_BASS_Init');
+              ffi.Pointer<ffi.Void>)>>('BASS_Init');
   late final _BASS_Init = _BASS_InitPtr.asFunction<
       int Function(
           int, int, int, ffi.Pointer<ffi.Void>, ffi.Pointer<ffi.Void>)>();
@@ -2569,6 +2569,8 @@ const int BASS_ERROR_UNSTREAMABLE = 47;
 
 const int BASS_ERROR_PROTOCOL = 48;
 
+const int BASS_ERROR_DENIED = 49;
+
 const int BASS_ERROR_UNKNOWN = -1;
 
 const int BASS_CONFIG_BUFFER = 0;
@@ -2673,11 +2675,11 @@ const int BASS_CONFIG_ANDROID_AAUDIO = 67;
 
 const int BASS_CONFIG_SAMPLE_ONEHANDLE = 69;
 
-const int BASS_CONFIG_DEV_TIMEOUT = 70;
-
 const int BASS_CONFIG_NET_META = 71;
 
 const int BASS_CONFIG_NET_RESTRATE = 72;
+
+const int BASS_CONFIG_REC_DEFAULT = 73;
 
 const int BASS_CONFIG_NET_AGENT = 16;
 
@@ -2698,6 +2700,14 @@ const int BASS_IOS_SESSION_AMBIENT = 4;
 const int BASS_IOS_SESSION_SPEAKER = 8;
 
 const int BASS_IOS_SESSION_DISABLE = 16;
+
+const int BASS_IOS_SESSION_DEACTIVATE = 32;
+
+const int BASS_IOS_SESSION_AIRPLAY = 64;
+
+const int BASS_IOS_SESSION_BTHFP = 128;
+
+const int BASS_IOS_SESSION_BTA2DP = 256;
 
 const int BASS_DEVICE_8BITS = 1;
 
@@ -2921,11 +2931,11 @@ const int BASS_ASYNCFILE = 1073741824;
 
 const int BASS_UNICODE = 2147483648;
 
-const int BASS_RECORD_PAUSE = 32768;
-
 const int BASS_RECORD_ECHOCANCEL = 8192;
 
 const int BASS_RECORD_AGC = 16384;
+
+const int BASS_RECORD_PAUSE = 32768;
 
 const int BASS_VAM_HARDWARE = 1;
 
@@ -2986,6 +2996,8 @@ const int BASS_CTYPE_MUSIC_XM = 131075;
 const int BASS_CTYPE_MUSIC_IT = 131076;
 
 const int BASS_CTYPE_MUSIC_MO3 = 256;
+
+const int BASS_PLUGIN_PROC = 1;
 
 const int BASS_3DMODE_NORMAL = 0;
 
@@ -3116,6 +3128,8 @@ const int BASS_ATTRIB_USER = 15;
 const int BASS_ATTRIB_TAIL = 16;
 
 const int BASS_ATTRIB_PUSH_LIMIT = 17;
+
+const int BASS_ATTRIB_DOWNLOADPROC = 18;
 
 const int BASS_ATTRIB_MUSIC_AMPLIFY = 256;
 
