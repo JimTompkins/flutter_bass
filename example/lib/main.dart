@@ -21,6 +21,7 @@ class _MyAppState extends State<MyApp> {
   void initState() {
     super.initState();
   }
+  int version = 0;
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +63,29 @@ class _MyAppState extends State<MyApp> {
                       }
                       // BASS_Init: -1 = default device, 48000 = sample rate, 0 = flags
                       bass.BASS_Init(-1, 48000, 0, nullptr, nullptr);
+                    },
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.all(25),
+                  child: TextButton(
+                    child: Text(
+                      'Get BASS version',
+                      style: TextStyle(fontSize: 20.0),
+                    ),
+                    onPressed: () {
+                      if (kDebugMode) {
+                        if (bass == null) {
+                          print('Error: bass is null!');
+                        } else {
+                          print('bass is not null');
+                        }
+                        if (bass.BASS_GetVersion == null) {
+                          print('Error: bass.BASS_GetVersion is null!');
+                        }
+                      }
+                      version = bass.BASS_GetVersion();
+                      print('BASS version: $version');
                     },
                   ),
                 ),
