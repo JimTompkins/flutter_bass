@@ -11,22 +11,29 @@ dependencies:
   flutter:
     sdk: flutter
   plugin_platform_interface: ^2.0.2
+  path_provider: ^2.0.11
 
 dev_dependencies:
-  ffi: ^1.1.2
-  ffigen: ^6.1.2
+  ffi: ^2.0.1
+  ffigen: ^7.0.0
   flutter_test:
     sdk: flutter
   flutter_lints: ^2.0.0
 
 ffigen:
-  name: 'FlutterBASS'
-  description: 'Flutter plugin for the un4seen BASS audio library'
-  output: 'lib/ffi/generated_bindings.dart'
+#  name: 'FlutterBASS'
+#  description: 'Flutter plugin for the un4seen BASS audio library'
+#  output: 'lib/ffi/generated_bindings.dart'
+#  headers:
+#    entry-points: 
+#      - 'ios/bass24-ios/bass.h'
+#      - 'ios/bass-ios-test/bass.h'
+  name: 'file_utils'
+  description: 'File utilities written in C callable from Flutter'
+  output: 'lib/file_utils/generated_bindings.dart'
   headers:
     entry-points: 
-#      - 'ios/bass24-ios/bass.h'
-      - 'ios/bass-ios-test/bass.h'
+      - 'src/file_utils.h'
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
@@ -82,3 +89,6 @@ flutter:
   #
   # For details regarding fonts in packages, see
   # https://flutter.dev/custom-fonts/#from-packages
+  assets:
+    - assets/sounds/cowbell.ogg
+    - assets/sounds/cowbell.mp3
