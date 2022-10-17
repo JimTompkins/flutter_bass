@@ -5,94 +5,23 @@ from [un4seen Developments](https://un4seen.com).
 
 BASS is a audio library that supports (among other architectures) both iOS and Android.
 
-## Using
+The flutter_bass example app has four buttons:
+1. Init BASS: this initializes the BASS library.  If already initialized, an error code will be printed.
+2. Get BASS version: prints the version of the BASS library to the console, currently 2.4.16.7
+3. Load sample: loads a sample sound (in this case a cowbell) as a BASS sample using the library
+function SampleLoad.  Then a channel is created using the SampleGetChannel function.
+4. Play sample: plays the cowbell sound using the BASS library function ChannelPlay.
 
+## Measuring Latency
 
-## Getting Started
+Latency can be measured using an audio recorder on another (i.e. not the one running flutter_bass) device.  For example, I use the Samsung VoiceRecorder app.  Record audio while hitting the "Play" button on the flutter_bass app.
+Try to make a sound when hitting the play button, for example by using your fingernail.
 
-This project is a starting point for a Flutter 
-[FFI plugin](https://docs.flutter.dev/development/platform-integration/c-interop),
-a specialized package that includes native code directly invoked with Dart FFI.
+Save the audio recording and then open it in an audio tool such as Audacity.  Zoom in on the waveform and
+measure the time between the button press and the cowbell sound.
 
-## Project stucture
+The current result is about 120ms on an iPhone 6.  For comparison, I've achieved 70ms with the soundpool Flutter package and about 20ms on Android using the flutter_ogg_piano app which uses the Oboe audio library.
 
-This template uses the following structure:
-
-* `src`: Contains the native source code, and a CmakeFile.txt file for building
-  that source code into a dynamic library.
-
-* `lib`: Contains the Dart code that defines the API of the plugin, and which
-  calls into the native code using `dart:ffi`.
-
-* platform folders (`android`, `ios`, `windows`, etc.): Contains the build files
-  for building and bundling the native code library with the platform application.
-
-## Buidling and bundling native code
-
-The `pubspec.yaml` specifies FFI plugins as follows:
-
-```yaml
-  plugin:
-    platforms:
-      some_platform:
-        ffiPlugin: true
-```
-
-This configuration invokes the native build for the various target platforms
-and bundles the binaries in Flutter applications using these FFI plugins.
-
-This can be combined with dartPluginClass, such as when FFI is used for the
-implementation of one platform in a federated plugin:
-
-```yaml
-  plugin:
-    implements: some_other_plugin
-    platforms:
-      some_platform:
-        dartPluginClass: SomeClass
-        ffiPlugin: true
-```
-
-A plugin can have both FFI and method channels:
-
-```yaml
-  plugin:
-    platforms:
-      some_platform:
-        pluginClass: SomeName
-        ffiPlugin: true
-```
-
-The native build systems that are invoked by FFI (and method channel) plugins are:
-
-* For Android: Gradle, which invokes the Android NDK for native builds.
-  * See the documentation in android/build.gradle.
-* For iOS and MacOS: Xcode, via CocoaPods.
-  * See the documentation in ios/flutter_bass.podspec.
-  * See the documentation in macos/flutter_bass.podspec.
-* For Linux and Windows: CMake.
-  * See the documentation in linux/CMakeLists.txt.
-  * See the documentation in windows/CMakeLists.txt.
-
-## Binding to native code
-
-To use the native code, bindings in Dart are needed.
-To avoid writing these by hand, they are generated from the header file
-(`src/flutter_bass.h`) by `package:ffigen`.
-Regenerate the bindings by running `flutter pub run ffigen --config ffigen.yaml`.
-
-## Invoking native code
-
-Very short-running native functions can be directly invoked from any isolate.
-For example, see `sum` in `lib/flutter_bass.dart`.
-
-Longer-running functions should be invoked on a helper isolate to avoid
-dropping frames in Flutter applications.
-For example, see `sumAsync` in `lib/flutter_bass.dart`.
-
-## Flutter help
-
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
-
+## Things Learned During Development
+- how to use ffigen to create a Flutter class from a .h file.
+- that Flutter root bundle assets can't be accessed as Files
