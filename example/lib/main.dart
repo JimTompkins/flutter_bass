@@ -2,6 +2,7 @@ import 'dart:ffi' as ffi;
 import 'package:ffi/ffi.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bass/ffi/generated_bindings.dart';
 import 'dart:io';
 import 'dart:async';
 import 'package:path_provider/path_provider.dart';
@@ -38,20 +39,25 @@ class _MyAppState extends State<MyApp> {
     return fileName;
   }
 
-  // read an mp3 file from assets and save to a temporary file
-  Future<String> getMp3FileFromAssets(String name) async {
+  // read an audio file from assets and save to a temporary file
+  // This is necessary since files in the root bundle are
+  // not acceissible as normal files.
+  Future<String> getAudioFileFromAssets(String name) async {
     // load from the bundle
-    final byteData = await rootBundle.load('assets/sounds/$name.mp3');
+    final byteData = await rootBundle.load('assets/sounds/$name');
     final buffer = byteData.buffer;
 
     // build a temporary file name
     Directory tempDir = await getTemporaryDirectory();
     String tempPath = tempDir.path;
-    var filePath = tempPath + '/' + name + '.mp3';
+    var filePath = tempPath + '/' + name;
 
     // write the data to the temporary file
-    Future<File> tempFile = File(filePath).writeAsBytes(
+    File tempFile = await File(filePath).writeAsBytes(
         buffer.asUint8List(byteData.offsetInBytes, byteData.lengthInBytes));
+
+    var length = await tempFile.length();
+    print('Wrote temporary file $filePath, length = $length');
 
     // return the path to the temp file
     return filePath;
@@ -64,14 +70,12 @@ class _MyAppState extends State<MyApp> {
 
   int version = 0;
   int errorCode = 0;
-  //int cowbellSample = 0;
+  int cowbellSample = 0;
   int cowbellStream = 0;
-  //int cowbellChannel = 0;
+  int cowbellChannel = 0;
 
   @override
   Widget build(BuildContext context) {
-    //const textStyle = TextStyle(fontSize: 25);
-    //const spacerSmall = SizedBox(height: 10);
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
@@ -100,10 +104,18 @@ class _MyAppState extends State<MyApp> {
                           print('Error: bass.BASS_Init is null!');
                         }
                       }
-                      // BASS_Init: -1 = default device, 44100 = sample rate, 0 = flags
-                      bass.BASS_Init(-1, 44100, 0, ffi.nullptr, ffi.nullptr);
+                      // BASS_Init: -1 = default device, 48000 = sample rate, 0 = flags
+                      bass.BASS_Init(-1, 48000, 0, ffi.nullptr, ffi.nullptr);
                       errorCode = bass.BASS_ErrorGetCode();
                       print('Error code = $errorCode');
+                      // set non-stop mode to reduce playback latency
+                      bass.BASS_SetConfig(BASS_CONFIG_DEV_NONSTOP, 1);
+                      // set the update period to 5ms
+                      bass.BASS_SetConfig(BASS_CONFIG_UPDATEPERIOD, 5);
+                      // set the buffer length to 10ms
+                      bass.BASS_SetConfig(BASS_CONFIG_BUFFER, 10);
+                      // disable ramping-in only: NORAMP is not defined?!?
+                      //bass.BASS_SetConfig(BASS_CONFIG_NORAMP, 2);
                     },
                   ),
                 ),
@@ -131,133 +143,14 @@ class _MyAppState extends State<MyApp> {
                     onPressed: () async {
                       String _fileName = await _localFileName;
 
-                      //File mp3File = new File(_fileName);
-                      //Uint8List _mp3 = new Uint8List(0);
-                      //await mp3File.readAsBytes().then((value) {
-                      //  _mp3 = Uint8List.fromList(value);
-                      //});
-                      //final ByteData bytes = await rootBundle.load('assets/sounds/cowbell.mp3');
-                      //final mp3 = bytes.buffer.asUint8List();
-                      //int _length = mp3.length;
-                      //Uint8List _mp3 = (await rootBundle.load(_fileName)).buffer.asUint8List();
-                      //File _file = File(_localFileName);
-                      //var _list = await _file.readAsBytes();
-                      //int _length = _list.length;
-                      //Pointer<Uint8> _buf = allocate<Uint8>(count: _length);
-                      //print('File size = $_length');
-                      //ffi.Pointer<ffi.Void> mp3Buff = allocate<int>(count: _length);
-                      //mp3Buff.setAll(mp3);
-                      //ffi.Pointer<ffi.Uint8List> _mp3Pointer = ffi.Pointer<ffi.Void>.from(mp3);
-
-                      //
-                      // Approach #1: use the standard fopen function.
-                      // This fails as it returns a null pointer.
-                      /*
-                      String fileName = await _localFileName;
-                      print('Loading file: $fileName');
-                      final ffi.Pointer<FILE> mp3File = await fileUtils.fopen(
-                          fileName.toNativeUtf8().cast<ffi.Char>(),
-                          "r".toNativeUtf8().cast<ffi.Char>());
-                      print('File opened: $mp3File');
-                      final ffi.Pointer<ffi.Void> mp3File2 = mp3File.cast();
-                      print('Pointer cast complete: $mp3File2');
-                      cowbellSample = bass.BASS_SampleLoad(
-                          0, // mem: use file instead of memory
-                          mp3File2, // *file: file pointer
-                          0, // offset: use file from the start
-                          0, // length: use entire file
-                          16, // max: maximum number of simultaneous playbacks
-                          0 // flags: no flags set
-                          );
-                      print('SampleLoad complete: $cowbellSample');
-                      */
-
-                      //
-                      // Approach #1a: use a custom fileOpen C function.
-                      // This fails as it returns a null pointer.
-                      /*
-                      String fileName = await _localFileName;
-                      print('Loading file: $fileName');
-                      final ffi.Pointer<FILE> mp3File = await fileUtils.openFile(
-                          fileName.toNativeUtf8().cast<ffi.Char>());
-                      print('File opened: $mp3File');
-                      final ffi.Pointer<ffi.Void> mp3File2 = mp3File.cast();
-                      print('Pointer cast complete: $mp3File2');
-                      cowbellSample = bass.BASS_SampleLoad(
-                          0, // mem: use file instead of memory
-                          mp3File2, // *file: file pointer
-                          0, // offset: use file from the start
-                          0, // length: use entire file
-                          16, // max: maximum number of simultaneous playbacks
-                          0 // flags: no flags set
-                          );
-                      print('SampleLoad complete: $cowbellSample');
-                      */
-
-                      //
-                      // Approach #2: read the file into a byte data.
-                      // Gives runtime error: Unhandled Exception:
-                      // type '_Uint8ArrayView' is not a subtype of type
-                      // 'Pointer<Void>' in type cast
-                      /*
-                      final ByteData bytes =
-                          await rootBundle.load('assets/sounds/cowbell.mp3');
-                      final mp3 = bytes.buffer.asUint8List();
-                      int _length = mp3.length;
-                      print('Length after rootBundle load: $_length');
-                      //final ffi.Pointer<ffi.Void> mp3File =
-                      //   mp3 as ffi.Pointer<ffi.Void>;
-                      //print('mp3File: $mp3File');
-                      cowbellSample = bass.BASS_SampleLoad(
-                          1, // mem: use memory instead of file
-                          mp3.cast(), // *file: memory pointer
-                          0, // offset: use file from the start
-                          _length, // length: use entire file
-                          16, // max: maximum number of simultaneous playbacks
-                          0 // flags: no flags set
-                          );
-                      */
-
-                      //
-                      // Approach 3: see if we can open the file using flutter
-                      // throws a runtime error: no such file.  The assets
-                      // are part of an archive so can't be read using file
-                      // routines.
-                      //
-                      /*
-                      String fileName = await _localFileName;
-                      print('Loading file: $fileName');
-                      File file = File(fileName);
-                      try {
-                        // Read the file
-                        final contents = await file.readAsBytes();
-                        if (kDebugMode) {
-                          print('reading from file $fileName');
-                        }
-                       return;
-                       } catch (e) {
-                         // If encountering an error, return 0
-                         if (kDebugMode) {
-                           print('HF: reading from file error: $e');
-                         }
-                       return;
-                       }
-                      */
-
                       //
                       // approach 4: read from asset bundle into a temporary file
-                      // then use approach 1 above to open it
                       // See SO "How do I get the Asset's file path in flutter?"
                       //
-                      String fileName = await getMp3FileFromAssets('cowbell');
+                      String fileName =
+                          await getAudioFileFromAssets('cowbell.mp3');
                       print('Loading file: $fileName');
-                      //final ffi.Pointer<FILE> mp3File = await fileUtils.fopen(
-                      //    fileName.toNativeUtf8().cast<ffi.Char>(),
-                      //    "r".toNativeUtf8().cast<ffi.Char>());
-                      //print('File opened: $mp3File');
-                      //final ffi.Pointer<ffi.Void> mp3File2 = mp3File.cast();
-                      //print('Pointer cast complete: $mp3File2');
-                      cowbellStream = bass.BASS_SampleLoad(
+                      cowbellSample = bass.BASS_SampleLoad(
                           0, // mem: use file instead of memory
                           fileName
                               .toNativeUtf8()
@@ -269,10 +162,11 @@ class _MyAppState extends State<MyApp> {
                           );
                       errorCode = bass.BASS_ErrorGetCode();
                       print(
-                          'BASS_SampleLoad complete!: cowbellStream = $cowbellStream, error code = $errorCode');
+                          'BASS_SampleLoad complete!: cowbellSample = $cowbellSample, error code = $errorCode');
 
-                      //cowbellChannel = bass.BASS_SampleGetChannel(cowbellSample, 0);
-                      //print('BASS channel: $cowbellChannel');
+                      cowbellChannel =
+                          bass.BASS_SampleGetChannel(cowbellSample, 0);
+                      print('BASS channel: $cowbellChannel');
                     },
                   ),
                 ),
@@ -284,7 +178,7 @@ class _MyAppState extends State<MyApp> {
                       style: TextStyle(fontSize: 20.0),
                     ),
                     onPressed: () async {
-                      int _result = bass.BASS_ChannelPlay(cowbellStream, 1);
+                      int _result = bass.BASS_ChannelPlay(cowbellChannel, 1);
                       errorCode = bass.BASS_ErrorGetCode();
                       print(
                           'Playing sample.  Result = $_result, error code = $errorCode');
