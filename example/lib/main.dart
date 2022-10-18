@@ -28,11 +28,6 @@ class _MyAppState extends State<MyApp> {
     return appDocDir.path;
   }
 
-  Future<File> get _localFile async {
-    final path = await _localPath;
-    return File('$path/assets/sounds/cowbell.mp3');
-  }
-
   Future<String> get _localFileName async {
     final path = await _localPath;
     String fileName = '$path/assets/sounds/cowbell.mp3';
@@ -73,6 +68,7 @@ class _MyAppState extends State<MyApp> {
   int cowbellSample = 0;
   int cowbellStream = 0;
   int cowbellChannel = 0;
+  final infoPointer = calloc<BASS_INFO>();
 
   @override
   Widget build(BuildContext context) {
@@ -104,18 +100,30 @@ class _MyAppState extends State<MyApp> {
                           print('Error: bass.BASS_Init is null!');
                         }
                       }
-                      // BASS_Init: -1 = default device, 48000 = sample rate, 0 = flags
-                      bass.BASS_Init(-1, 48000, 0, ffi.nullptr, ffi.nullptr);
+                      // BASS_Init: -1 = default device, 44100 = sample rate, 0 = flags
+                      bass.BASS_Init(-1, 44100, 0, ffi.nullptr, ffi.nullptr);
                       errorCode = bass.BASS_ErrorGetCode();
                       print('Error code = $errorCode');
                       // set non-stop mode to reduce playback latency
                       bass.BASS_SetConfig(BASS_CONFIG_DEV_NONSTOP, 1);
+
                       // set the update period to 5ms
                       bass.BASS_SetConfig(BASS_CONFIG_UPDATEPERIOD, 5);
+
                       // set the buffer length to 10ms
                       bass.BASS_SetConfig(BASS_CONFIG_BUFFER, 10);
+
                       // disable ramping-in only: NORAMP is not defined?!?
                       //bass.BASS_SetConfig(BASS_CONFIG_NORAMP, 2);
+
+                      // print out some elements of the BASS_INFO struct
+                      bass.BASS_GetInfo(infoPointer);
+                      int latency = infoPointer.ref.latency;
+                      int freq = infoPointer.ref.freq;
+                      int minBuf = infoPointer.ref.minbuf;
+                      print('Latency = $latency');
+                      print('Minbuf = $minBuf');
+                      print('Frequency = $freq');
                     },
                   ),
                 ),
@@ -167,6 +175,10 @@ class _MyAppState extends State<MyApp> {
                       cowbellChannel =
                           bass.BASS_SampleGetChannel(cowbellSample, 0);
                       print('BASS channel: $cowbellChannel');
+
+                      // set the playback buffering length to 0s to minimize latency
+                      bass.BASS_ChannelSetAttribute(
+                          cowbellChannel, BASS_ATTRIB_BUFFER, 0.0);
                     },
                   ),
                 ),
