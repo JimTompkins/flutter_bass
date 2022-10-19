@@ -1,6 +1,6 @@
 import 'dart:ffi' as ffi;
 import 'package:ffi/ffi.dart';
-import 'package:flutter/foundation.dart';
+//import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bass/ffi/generated_bindings.dart';
 import 'dart:io';
@@ -10,8 +10,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bass/flutter_bass.dart';
-import 'package:flutter_bass/fileUtils.dart';
-import 'package:flutter_bass/file_utils/generated_bindings.dart';
+//import 'package:flutter_bass/fileUtils.dart';
+//import 'package:flutter_bass/file_utils/generated_bindings.dart';
 
 void main() {
   runApp(MyApp());
@@ -23,16 +23,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  Future<String> get _localPath async {
-    Directory appDocDir = await getApplicationDocumentsDirectory();
-    return appDocDir.path;
-  }
-
-  Future<String> get _localFileName async {
-    final path = await _localPath;
-    String fileName = '$path/assets/sounds/cowbell.mp3';
-    return fileName;
-  }
 
   // read an audio file from assets and save to a temporary file
   // This is necessary since files in the root bundle are
@@ -45,7 +35,7 @@ class _MyAppState extends State<MyApp> {
     // build a temporary file name
     Directory tempDir = await getTemporaryDirectory();
     String tempPath = tempDir.path;
-    var filePath = tempPath + '/' + name;
+    var filePath = '{$tempPath}/{$name}';
 
     // write the data to the temporary file
     File tempFile = await File(filePath).writeAsBytes(
@@ -83,23 +73,13 @@ class _MyAppState extends State<MyApp> {
             child: Column(
               children: [
                 Container(
-                  margin: EdgeInsets.all(10),
+                  margin: const EdgeInsets.all(10),
                   child: TextButton(
-                    child: Text(
+                    child: const Text(
                       'Init BASS',
                       style: TextStyle(fontSize: 20.0),
                     ),
                     onPressed: () {
-                      if (kDebugMode) {
-                        if (bass == null) {
-                          print('Error: bass is null!');
-                        } else {
-                          print('bass is not null');
-                        }
-                        if (bass.BASS_Init == null) {
-                          print('Error: bass.BASS_Init is null!');
-                        }
-                      }
                       // BASS_Init: -1 = default device, 44100 = sample rate, 0 = flags
                       bass.BASS_Init(-1, 44100, 0, ffi.nullptr, ffi.nullptr);
                       errorCode = bass.BASS_ErrorGetCode();
@@ -128,9 +108,9 @@ class _MyAppState extends State<MyApp> {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.all(10),
+                  margin: const EdgeInsets.all(10),
                   child: TextButton(
-                    child: Text(
+                    child: const Text(
                       'Get BASS version',
                       style: TextStyle(fontSize: 20.0),
                     ),
@@ -142,15 +122,13 @@ class _MyAppState extends State<MyApp> {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.all(10),
+                  margin: const EdgeInsets.all(10),
                   child: TextButton(
-                    child: Text(
+                    child: const Text(
                       'Load sample',
                       style: TextStyle(fontSize: 20.0),
                     ),
                     onPressed: () async {
-                      String _fileName = await _localFileName;
-
                       //
                       // approach 4: read from asset bundle into a temporary file
                       // See SO "How do I get the Asset's file path in flutter?"
@@ -183,17 +161,17 @@ class _MyAppState extends State<MyApp> {
                   ),
                 ),
                 Container(
-                  margin: EdgeInsets.all(10),
+                  margin: const EdgeInsets.all(10),
                   child: TextButton(
-                    child: Text(
+                    child: const Text(
                       'Play sample',
                       style: TextStyle(fontSize: 20.0),
                     ),
                     onPressed: () async {
-                      int _result = bass.BASS_ChannelPlay(cowbellChannel, 1);
+                      int result = bass.BASS_ChannelPlay(cowbellChannel, 1);
                       errorCode = bass.BASS_ErrorGetCode();
                       print(
-                          'Playing sample.  Result = $_result, error code = $errorCode');
+                          'Playing sample.  Result = $result, error code = $errorCode');
                     },
                   ),
                 ),
