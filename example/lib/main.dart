@@ -23,7 +23,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   // read an audio file from assets and save to a temporary file
   // This is necessary since files in the root bundle are
   // not acceissible as normal files.
@@ -35,7 +34,8 @@ class _MyAppState extends State<MyApp> {
     // build a temporary file name
     Directory tempDir = await getTemporaryDirectory();
     String tempPath = tempDir.path;
-    var filePath = '{$tempPath}/{$name}';
+    var filePath = tempPath + '/' + name;
+    print('Writing to temporary file $filePath');
 
     // write the data to the temporary file
     File tempFile = await File(filePath).writeAsBytes(
@@ -95,15 +95,6 @@ class _MyAppState extends State<MyApp> {
 
                       // disable ramping-in only: NORAMP is not defined?!?
                       //bass.BASS_SetConfig(BASS_CONFIG_NORAMP, 2);
-
-                      // print out some elements of the BASS_INFO struct
-                      bass.BASS_GetInfo(infoPointer);
-                      int latency = infoPointer.ref.latency;
-                      int freq = infoPointer.ref.freq;
-                      int minBuf = infoPointer.ref.minbuf;
-                      print('Latency = $latency');
-                      print('Minbuf = $minBuf');
-                      print('Frequency = $freq');
                     },
                   ),
                 ),
@@ -172,6 +163,14 @@ class _MyAppState extends State<MyApp> {
                       errorCode = bass.BASS_ErrorGetCode();
                       print(
                           'Playing sample.  Result = $result, error code = $errorCode');
+                      // print out some elements of the BASS_INFO struct
+                      bass.BASS_GetInfo(infoPointer);
+                      int latency = infoPointer.ref.latency;
+                      int freq = infoPointer.ref.freq;
+                      int minBuf = infoPointer.ref.minbuf;
+                      print('Latency = $latency');
+                      print('Minbuf = $minBuf');
+                      print('Frequency = $freq');
                     },
                   ),
                 ),
