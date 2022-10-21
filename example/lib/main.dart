@@ -6,6 +6,7 @@ import 'package:flutter_bass/ffi/generated_bindings.dart';
 import 'dart:io';
 import 'dart:async';
 import 'package:path_provider/path_provider.dart';
+import 'package:soundpool/soundpool.dart';
 
 import 'package:flutter/material.dart';
 
@@ -60,6 +61,10 @@ class _MyAppState extends State<MyApp> {
   int cowbellChannel = 0;
   final infoPointer = calloc<BASS_INFO>();
 
+  int soundId = 0;
+  int streamId = 0;
+  Soundpool pool = Soundpool(streamType: StreamType.notification);
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -80,21 +85,25 @@ class _MyAppState extends State<MyApp> {
                       style: TextStyle(fontSize: 20.0),
                     ),
                     onPressed: () {
-                      // BASS_Init: -1 = default device, 44100 = sample rate, 0 = flags
-                      bass.BASS_Init(-1, 44100, 0, ffi.nullptr, ffi.nullptr);
-                      errorCode = bass.BASS_ErrorGetCode();
-                      print('Error code = $errorCode');
                       // set non-stop mode to reduce playback latency
                       bass.BASS_SetConfig(BASS_CONFIG_DEV_NONSTOP, 1);
+
+                      // set the device update period to 5ms
+                      bass.BASS_SetConfig(BASS_CONFIG_DEV_PERIOD, 5);
 
                       // set the update period to 5ms
                       bass.BASS_SetConfig(BASS_CONFIG_UPDATEPERIOD, 5);
 
-                      // set the buffer length to 10ms
-                      bass.BASS_SetConfig(BASS_CONFIG_BUFFER, 10);
+                      // set the buffer length to 12ms
+                      bass.BASS_SetConfig(BASS_CONFIG_BUFFER, 12);
 
                       // disable ramping-in only: NORAMP is not defined?!?
                       //bass.BASS_SetConfig(BASS_CONFIG_NORAMP, 2);
+
+                      // BASS_Init: -1 = default device, 44100 = sample rate, 0 = flags
+                      bass.BASS_Init(-1, 44100, 0, ffi.nullptr, ffi.nullptr);
+                      errorCode = bass.BASS_ErrorGetCode();
+                      print('Error code = $errorCode');
                     },
                   ),
                 ),
@@ -116,7 +125,7 @@ class _MyAppState extends State<MyApp> {
                   margin: const EdgeInsets.all(10),
                   child: TextButton(
                     child: const Text(
-                      'Load sample',
+                      'Load sample in BASS',
                       style: TextStyle(fontSize: 20.0),
                     ),
                     onPressed: () async {
@@ -155,7 +164,7 @@ class _MyAppState extends State<MyApp> {
                   margin: const EdgeInsets.all(10),
                   child: TextButton(
                     child: const Text(
-                      'Play sample',
+                      'Play sample in BASS',
                       style: TextStyle(fontSize: 20.0),
                     ),
                     onPressed: () async {
@@ -174,6 +183,44 @@ class _MyAppState extends State<MyApp> {
                     },
                   ),
                 ),
+                Container(
+                  margin: const EdgeInsets.all(10),
+                  child: TextButton(
+                    child: const Text(
+                      'Init soundpool',
+                      style: TextStyle(fontSize: 20.0),
+                    ),
+                    onPressed: () {
+                    },
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.all(10),
+                  child: TextButton(
+                    child: const Text(
+                      'Load file in soundpool',
+                      style: TextStyle(fontSize: 20.0),
+                    ),
+                    onPressed: () async {
+                     soundId = await rootBundle.load("assets/sounds/cowbell.mp3").then((ByteData soundData) {
+                        return pool.load(soundData);
+                         });
+                    },
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.all(10),
+                  child: TextButton(
+                    child: const Text(
+                      'Play in soundpool',
+                      style: TextStyle(fontSize: 20.0),
+                    ),
+                    onPressed: () async {
+                    streamId = await pool.play(soundId);
+                    },
+                  ),
+                ),
+
               ],
             ),
           ),
