@@ -43,3 +43,4 @@ The mean latency with BASS on an iPhone 6 is 114.8ms (N=5) with a standard devia
 ## Things Learned During Development
 - how to use ffigen to create a Flutter class from a .h file.
 - that Flutter root bundle assets can't be accessed as Files
+- when using BASS, SetConfig won't have any effect when called after Init.  
