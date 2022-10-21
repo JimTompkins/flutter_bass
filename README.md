@@ -3,7 +3,7 @@
 A Flutter plugin to allow Flutter apps to use the BASS audio library
 from [un4seen Developments](https://un4seen.com).
 
-BASS is a audio library that supports (among other architectures) both iOS and Android.
+BASS is an audio library that supports (among other architectures) both iOS and Android.
 
 The flutter_bass example app has four buttons related to BASS:
 1. Init BASS: this initializes the BASS library.  If already initialized, an error code will be printed.
