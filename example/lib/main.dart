@@ -1,6 +1,5 @@
 import 'dart:ffi' as ffi;
 import 'package:ffi/ffi.dart';
-//import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bass/ffi/generated_bindings.dart';
 import 'dart:io';
@@ -11,8 +10,6 @@ import 'package:soundpool/soundpool.dart';
 import 'package:flutter/material.dart';
 
 import 'package:flutter_bass/flutter_bass.dart';
-//import 'package:flutter_bass/fileUtils.dart';
-//import 'package:flutter_bass/file_utils/generated_bindings.dart';
 
 void main() {
   runApp(MyApp());
@@ -24,9 +21,10 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
+
   // read an audio file from assets and save to a temporary file
   // This is necessary since files in the root bundle are
-  // not acceissible as normal files.
+  // not accessible as normal files.
   Future<String> getAudioFileFromAssets(String name) async {
     // load from the bundle
     final byteData = await rootBundle.load('assets/sounds/$name');
