@@ -53,6 +53,11 @@ android {
         targetCompatibility JavaVersion.VERSION_1_8
     }
 
+    sourceSets {
+        //main.java.srcDirs += 'src/main/kotlin'
+        main.jniLibs.srcDirs += '/Libs/BASS'
+    }
+
     defaultConfig {
         minSdkVersion 16
     }

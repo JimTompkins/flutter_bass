@@ -18,7 +18,7 @@ final DynamicLibrary _dylib = () {
     if (kDebugMode) {
       print('Opened dynamic BASS library on Android');
     }
-    return DynamicLibrary.open('lib$_libName.so');
+    return DynamicLibrary.open('libbass.so');
   }
   throw UnsupportedError('Unknown platform: ${Platform.operatingSystem}');
 }();
