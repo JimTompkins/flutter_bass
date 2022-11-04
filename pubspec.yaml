@@ -89,6 +89,3 @@ flutter:
   #
   # For details regarding fonts in packages, see
   # https://flutter.dev/custom-fonts/#from-packages
-  #assets:
-  #  - assets/sounds/cowbell.ogg
-  #  - assets/sounds/cowbell.mp3

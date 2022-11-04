@@ -6,6 +6,7 @@ import 'dart:io';
 import 'dart:async';
 import 'package:path_provider/path_provider.dart';
 import 'package:soundpool/soundpool.dart';
+import 'package:flutter_ogg_piano/flutter_ogg_piano.dart';
 
 import 'package:flutter/material.dart';
 
@@ -62,6 +63,7 @@ class _MyAppState extends State<MyApp> {
   int soundId = 0;
   int streamId = 0;
   Soundpool pool = Soundpool(streamType: StreamType.notification);
+  FlutterOggPiano fop = FlutterOggPiano();
 
   @override
   Widget build(BuildContext context) {
@@ -200,9 +202,9 @@ class _MyAppState extends State<MyApp> {
                       style: TextStyle(fontSize: 20.0),
                     ),
                     onPressed: () async {
-                     soundId = await rootBundle.load("assets/sounds/cowbell.mp3").then((ByteData soundData) {
+                      soundId = await rootBundle.load("assets/sounds/cowbell.mp3").then((ByteData soundData) {
                         return pool.load(soundData);
-                         });
+                      });
                     },
                   ),
                 ),
@@ -214,7 +216,44 @@ class _MyAppState extends State<MyApp> {
                       style: TextStyle(fontSize: 20.0),
                     ),
                     onPressed: () async {
-                    streamId = await pool.play(soundId);
+                      streamId = await pool.play(soundId);
+                    },
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.all(10),
+                  child: TextButton(
+                    child: const Text(
+                      'Init flutter_ogg_piano',
+                      style: TextStyle(fontSize: 20.0),
+                    ),
+                    onPressed: () {
+                      fop.init(mode: MODE.LOW_LATENCY);
+                    },
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.all(10),
+                  child: TextButton(
+                    child: const Text(
+                      'Load file in flutter_ogg_piano',
+                      style: TextStyle(fontSize: 20.0),
+                    ),
+                    onPressed: () async {
+                      rootBundle.load("assets/sounds/cowbell.ogg").then((ogg) {
+                        fop.load(src: ogg, name: "cowbell.ogg", index: 0, forceLoad: true, replace: true);
+                      });                    },
+                  ),
+                ),
+                Container(
+                  margin: const EdgeInsets.all(10),
+                  child: TextButton(
+                    child: const Text(
+                      'Play in flutter_ogg_piano',
+                      style: TextStyle(fontSize: 20.0),
+                    ),
+                    onPressed: () async {
+                      fop.play(index: 0, note: 0);
                     },
                   ),
                 ),
