@@ -91,6 +91,11 @@ class _MyAppState extends State<MyApp> {
                       // set the device update period to 5ms
                       bass.BASS_SetConfig(BASS_CONFIG_DEV_PERIOD, 5);
 
+                      // set the device buffer length on Android
+                      if (Platform.isAndroid) {
+                        bass.BASS_SetConfig(BASS_CONFIG_DEV_BUFFER, 10);
+                      }
+
                       // set the update period to 5ms
                       bass.BASS_SetConfig(BASS_CONFIG_UPDATEPERIOD, 5);
 
