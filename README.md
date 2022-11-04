@@ -51,13 +51,13 @@ The following table compares the button-press-to-playback latency of the differe
 | :---                 | :---              | :---:              | :---:         |
 | BASS 2.4             | iPhone 6          | 115ms              |  11.3ms |
 | Soundpool            | iPhone 6          | 238ms              | 12.3ms |
-| BASS 2.4             | Samsung Galaxy S7 | 267ms              | 18.8ms |
+| BASS 2.4             | Samsung Galaxy S7 | 222ms              | 9.6ms |
 | flutter_ogg_piano    | Samsung Galaxy S7 | 158ms              | 5.9ms |
 
 My conclusions:
 - for lowest playback latency, use BASS on iOS and flutter_ogg_piano on Android.
 - on iOS, the latency stdev is similar between BASS and Soundpool, probably due to the variation from OS being similar.
-- on Android, the BASS stdev is quite high compared to the others.  This might come from Flutter's FFI interface.  The flutter_ogg_piano stdev is the lowest measured, probably since it is tightly integrated with Android's native Oboe library.
+- on Android, the BASS stdev is higher than that with flutter_ogg_piano.  This might come from Flutter's FFI interface.  The flutter_ogg_piano stdev is the lowest measured, probably since it is tightly integrated with Android's native Oboe library.
 
 ## Things Learned During Development
 - how to use ffigen to create a Flutter class from a .h file.
