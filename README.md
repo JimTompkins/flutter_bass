@@ -51,15 +51,24 @@ The following table compares the button-press-to-playback latency of the differe
 | :---                 | :---              | :---:              | :---:         |
 | BASS 2.4             | iPhone 6          | 115ms              |  11.3ms |
 | Soundpool            | iPhone 6          | 238ms              | 12.3ms |
-| BASS 2.4             | Samsung Galaxy S7 | 222ms              | 9.6ms |
+| BASS 2.4             | Samsung Galaxy S7 | 153ms              | 5.6ms |
 | flutter_ogg_piano    | Samsung Galaxy S7 | 158ms              | 5.9ms |
 
-My conclusions:
-- for lowest playback latency, use BASS on iOS and flutter_ogg_piano on Android.
-- on iOS, the latency stdev is similar between BASS and Soundpool, probably due to the variation from OS being similar.
-- on Android, the BASS stdev is higher than that with flutter_ogg_piano.  This might come from Flutter's FFI interface.  The flutter_ogg_piano stdev is the lowest measured, probably since it is tightly integrated with Android's native Oboe library.
+To achieve the Android BASS result above, some tweaking was required to get from the first working result of 267ms (yikes!) to the improved result of 153ms:
+- setting the frequency to 48000 (instead of 44100) reduced the mean latency by 68ms.  With the original setting of 44100, this error message resulted: 
+```W/AudioTrack(29616): AUDIO_OUTPUT_FLAG_FAST denied by client; transfer 1, track 44100 Hz, output 48000 Hz.```
+- With the modified setting of 48000, the message became:
+```[   +6 ms] I/AudioTrack(29616): AUDIO_OUTPUT_FLAG_FAST successful; frameCount 480 -> 480```
+- setting BASS_CONFIG_DEV_BUFFER to 10ms reduced the mean latency by 45ms.
 
-## Things Learned During Development
+My conclusions:
+- for lowest playback latency, use BASS on iOS and Android.
+- on iOS and Android, the latency stdev is similar between BASS and either Soundpool or flutter_ogg_piano, probably due to the variation from OS being similar.
+
+
+## Lessons Learned During Development
 - how to use ffigen to create a Flutter class from a .h file.
 - that Flutter root bundle assets can't be accessed as Files
-- when using BASS, SetConfig won't have any effect when called after Init.  
+- when using BASS, SetConfig won't have any effect when called after Init.
+- for Android, set the BASS_CONFIG_DEV_BUFFER low e.g. 10ms
+- for Android, set the frequency to 48000 instead of 44100 for low latency  
