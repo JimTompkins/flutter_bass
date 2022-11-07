@@ -28,4 +28,8 @@ in Flutter projects.
   s.pod_target_xcconfig = {'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386', "OTHER_LDFLAGS" => '-force_load $SRCROOT/../../../ios/bass24-ios/bass.xcframework/ios-arm64_armv7_armv7s/libbass.a -framework AudioToolbox -framework CFNetwork -framework AVFoundation -framework JavaScriptCore -framework Accelerate' }
   s.vendored_libraries = '$SRCROOT/../../../ios/bass24-ios/bass.xcframework/ios-arm64_armv7_armv7s/libbass.a'
   s.swift_version = '5.0'
+
+  s.preserve_paths = 'flutter_bass.xcframework/**/*'
+  s.xcconfig = { 'OTHER_LD_FLAGS' => '-framework flutter_bass'}
+  s.vendored_frameworks = 'flutter_bass.xcframework'
 end
