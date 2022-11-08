@@ -29,7 +29,7 @@ in Flutter projects.
   s.vendored_libraries = '$SRCROOT/../../../ios/bass24-ios/bass.xcframework/ios-arm64_armv7_armv7s/libbass.a'
   s.swift_version = '5.0'
 
-  s.preserve_paths = 'flutter_bass.xcframework/**/*'
-  s.xcconfig = { 'OTHER_LD_FLAGS' => '-framework flutter_bass'}
-  s.vendored_frameworks = 'flutter_bass.xcframework'
+  s.preserve_paths = 'bass.xcframework/**/*'
+  s.xcconfig = { 'OTHER_LD_FLAGS' => '-framework bass'}
+  s.vendored_frameworks = 'bass.xcframework'
 end
