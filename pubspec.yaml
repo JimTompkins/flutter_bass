@@ -56,10 +56,10 @@ flutter:
     platforms:
       android:
         ffiPlugin: true
-        pluginClass: FlutterBASS
+        #pluginClass: FlutterBASS
       ios:
         ffiPlugin: true
-        pluginClass: FlutterBASS
+        #pluginClass: FlutterBASS
 
   # To add assets to your plugin package, add an assets section, like this:
   # assets:
