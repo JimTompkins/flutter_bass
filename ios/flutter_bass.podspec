@@ -25,8 +25,20 @@ in Flutter projects.
 
   # Flutter.framework does not contain a i386 slice.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
-  s.pod_target_xcconfig = {'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386', "OTHER_LDFLAGS" => '-force_load $SRCROOT/../../../ios/bass24-ios/bass.xcframework/ios-arm64_armv7_armv7s/libbass.a -framework AudioToolbox -framework CFNetwork -framework AVFoundation -framework JavaScriptCore -framework Accelerate' }
-  s.vendored_libraries = '$SRCROOT/../../../ios/bass24-ios/bass.xcframework/ios-arm64_armv7_armv7s/libbass.a'
+  # These next two lines work for the flutter_bass example app, but not for the happy_feet_app because the
+  # relative path does not find the libbass.a file
+  #s.pod_target_xcconfig = {'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386', "OTHER_LDFLAGS" => '-force_load $SRCROOT/../../../ios/bass24-ios/bass.xcframework/ios-arm64_armv7_armv7s/libbass.a -framework AudioToolbox -framework CFNetwork -framework AVFoundation -framework JavaScriptCore -framework Accelerate' }
+  #s.vendored_libraries = '$SRCROOT/../../../ios/bass24-ios/bass.xcframework/ios-arm64_armv7_armv7s/libbass.a'
+  
+  # These next two lines do not work since the podspec cannot have absolute path names.
+  #s.pod_target_xcconfig = {'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386', "OTHER_LDFLAGS" => '-force_load /Users/jimtompkins/git/flutter_bass/ios/bass24-ios/bass.xcframework/ios-arm64_armv7_armv7s/libbass.a -framework AudioToolbox -framework CFNetwork -framework AVFoundation -framework JavaScriptCore -framework Accelerate' }
+  #s.vendored_libraries = '/Users/jimtompkins/git/flutter_bass/ios/bass24-ios/bass.xcframework/ios-arm64_armv7_armv7s/libbass.a'
+  
+  # These next two lines try a relative path but one that will work for happy_feet_app in a parallel 
+  # folder to flutter_bass
+  s.pod_target_xcconfig = {'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386', "OTHER_LDFLAGS" => '-force_load $SRCROOT/../../../flutter_bass/ios/bass24-ios/bass.xcframework/ios-arm64_armv7_armv7s/libbass.a -framework AudioToolbox -framework CFNetwork -framework AVFoundation -framework JavaScriptCore -framework Accelerate' }
+  s.vendored_libraries = '$SRCROOT/../../../flutter_bass/ios/bass24-ios/bass.xcframework/ios-arm64_armv7_armv7s/libbass.a'
+  
   s.swift_version = '5.0'
 
   s.preserve_paths = 'bass.xcframework/**/*'
