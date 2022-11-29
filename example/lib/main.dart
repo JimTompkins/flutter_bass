@@ -22,7 +22,6 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-
   // read an audio file from assets and save to a temporary file
   // This is necessary since files in the root bundle are
   // not accessible as normal files.
@@ -58,6 +57,11 @@ class _MyAppState extends State<MyApp> {
   int cowbellSample = 0;
   int cowbellStream = 0;
   int cowbellChannel = 0;
+  int urlSteam = 0;
+  int remoteStream = 0;
+  int remoteChannel = 0;
+  String remoteFileName =
+      'http://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3';
   final infoPointer = calloc<BASS_INFO>();
 
   int soundId = 0;
@@ -141,6 +145,7 @@ class _MyAppState extends State<MyApp> {
                       String fileName =
                           await getAudioFileFromAssets('cowbell.mp3');
                       print('Loading file: $fileName');
+                      /*
                       cowbellSample = bass.BASS_SampleLoad(
                           0, // mem: use file instead of memory
                           fileName
@@ -151,9 +156,20 @@ class _MyAppState extends State<MyApp> {
                           1, // max: max number of playbacks
                           0 // flags: no flags set
                           );
+                      */
+                      remoteStream = bass.BASS_StreamCreateURL(
+                          remoteFileName.toNativeUtf8().cast<ffi.Int8>(),
+                          0,
+                          0,
+                          ffi.nullptr,
+                          ffi.nullptr);
                       errorCode = bass.BASS_ErrorGetCode();
+                      /*
                       print(
                           'BASS_SampleLoad complete!: cowbellSample = $cowbellSample, error code = $errorCode');
+                      */
+                      print(
+                          'BASS_StreamCreateURL complete!: remoteStream = $remoteStream, error code = $errorCode');
 
                       cowbellChannel =
                           bass.BASS_SampleGetChannel(cowbellSample, 0);
@@ -173,7 +189,8 @@ class _MyAppState extends State<MyApp> {
                       style: TextStyle(fontSize: 20.0),
                     ),
                     onPressed: () async {
-                      int result = bass.BASS_ChannelPlay(cowbellChannel, 1);
+                      //int result = bass.BASS_ChannelPlay(cowbellChannel, 1);
+                      int result = bass.BASS_ChannelPlay(remoteStream, 1);
                       errorCode = bass.BASS_ErrorGetCode();
                       print(
                           'Playing sample.  Result = $result, error code = $errorCode');
@@ -195,8 +212,7 @@ class _MyAppState extends State<MyApp> {
                       'Init soundpool',
                       style: TextStyle(fontSize: 20.0),
                     ),
-                    onPressed: () {
-                    },
+                    onPressed: () {},
                   ),
                 ),
                 Container(
@@ -207,7 +223,9 @@ class _MyAppState extends State<MyApp> {
                       style: TextStyle(fontSize: 20.0),
                     ),
                     onPressed: () async {
-                      soundId = await rootBundle.load("assets/sounds/cowbell.mp3").then((ByteData soundData) {
+                      soundId = await rootBundle
+                          .load("assets/sounds/cowbell.mp3")
+                          .then((ByteData soundData) {
                         return pool.load(soundData);
                       });
                     },
@@ -246,8 +264,14 @@ class _MyAppState extends State<MyApp> {
                     ),
                     onPressed: () async {
                       rootBundle.load("assets/sounds/cowbell.ogg").then((ogg) {
-                        fop.load(src: ogg, name: "cowbell.ogg", index: 0, forceLoad: true, replace: true);
-                      });                    },
+                        fop.load(
+                            src: ogg,
+                            name: "cowbell.ogg",
+                            index: 0,
+                            forceLoad: true,
+                            replace: true);
+                      });
+                    },
                   ),
                 ),
                 Container(
@@ -262,7 +286,6 @@ class _MyAppState extends State<MyApp> {
                     },
                   ),
                 ),
-
               ],
             ),
           ),
