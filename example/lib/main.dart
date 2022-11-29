@@ -110,7 +110,11 @@ class _MyAppState extends State<MyApp> {
                       //bass.BASS_SetConfig(BASS_CONFIG_NORAMP, 2);
 
                       // BASS_Init: -1 = default device, 44100 = sample rate, 0 = flags
-                      bass.BASS_Init(-1, 44100, 0, ffi.nullptr, ffi.nullptr);
+                      if (Platform.isIOS) {
+                        bass.BASS_Init(-1, 44100, 0, ffi.nullptr, ffi.nullptr);
+                      } else if (Platform.isAndroid) {
+                        bass.BASS_Init(-1, 48000, 0, ffi.nullptr, ffi.nullptr);
+                      }
                       errorCode = bass.BASS_ErrorGetCode();
                       print('Error code = $errorCode');
                     },
